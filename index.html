@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Пойдете ли вы со мной на свидание? 💕</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="floating-hearts" id="floatingHearts"></div>
+    
+    <div class="container">
+        <div class="sparkles" id="sparkles"></div>
+        
+        <div class="heart-icon">💕</div>
+        
+        <h1>Пойдете ли вы со мной на свидание? 💕</h1>
+        
+        <div class="message">
+            Моя принцесса 💖<br><br>
+            Я хочу пойти с моей любимой на свидание, и провести прекрасное время вместе<br><br>
+            <span class="special-text">Пойдешь со мной на свидание 18 августа 2025 в 18:00?</span><br><br>
+            Обещаю, это будет интересно! ✨
+        </div>
+        
+        <div class="buttons-container" id="buttonsContainer">
+            <button class="btn btn-yes" onclick="handleYes()">Да! 💕</button>
+            <button class="btn btn-no" onclick="handleNo()">Нет 💔</button>
+        </div>
+    </div>
+
+    <div class="celebration" id="celebration"></div>
+
+    <script>
+        // Function to log button clicks to Google Sheets
+        function logButtonClick(buttonClicked) {
+            const deviceInfo = getDeviceInfo();
+            const timestamp = new Date().toISOString();
+            
+            // Prepare data for Google Sheets
+            const rowData = [
+                timestamp,
+                buttonClicked,
+                deviceInfo.browser,
+                deviceInfo.deviceType,
+                deviceInfo.platform,
+                deviceInfo.language,
+                deviceInfo.screenWidth,
+                deviceInfo.screenHeight,
+                deviceInfo.windowWidth,
+                deviceInfo.windowHeight,
+                deviceInfo.userAgent
+            ];
+            
+            // Send data to Google Apps Script
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxUWH8p82y4CRXQJgT6grH_02o_xsQ6zJk0xoIjJhhNYxn9cn_fqCt8o52WlUWJqR_hyQ/exec';
+            
+            fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ data: rowData })
+            })
+            .then(() => {
+                console.log('Click logged to Google Sheets successfully');
+            })
+            .catch(error => {
+                console.error('Error logging click:', error);
+            });
+        }
+
+        function getDeviceInfo() {
+            const userAgent = navigator.userAgent;
+            let deviceType = 'desktop';
+            let browser = 'unknown';
+            
+            // Detect device type
+            if (/iPhone|iPad|iPod/.test(userAgent)) {
+                deviceType = 'iOS';
+            } else if (/Android/.test(userAgent)) {
+                deviceType = 'Android';
+            } else if (/Mac/.test(userAgent)) {
+                deviceType = 'Mac';
+            } else if (/Windows/.test(userAgent)) {
+                deviceType = 'Windows';
+            }
+            
+            // Detect browser
+            if (/Chrome/.test(userAgent)) {
+                browser = 'Chrome';
+            } else if (/Firefox/.test(userAgent)) {
+                browser = 'Firefox';
+            } else if (/Safari/.test(userAgent)) {
+                browser = 'Safari';
+            } else if (/Edge/.test(userAgent)) {
+                browser = 'Edge';
+            }
+            
+            return {
+                browser: browser,
+                deviceType: deviceType,
+                platform: navigator.platform,
+                language: navigator.language,
+                screenWidth: screen.width,
+                screenHeight: screen.height,
+                windowWidth: window.innerWidth,
+                windowHeight: window.innerHeight,
+                userAgent: userAgent
+            };
+        }
+
+        // Create floating hearts
+        function createFloatingHearts() {
+            const heartsContainer = document.getElementById('floatingHearts');
+            const hearts = ['💕', '💖', '💗', '💓', '💝', '💘'];
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                
+                heartsContainer.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 6000);
+            }, 300);
+        }
+
+        // Create sparkles
+        function createSparkles() {
+            const sparklesContainer = document.getElementById('sparkles');
+            
+            setInterval(() => {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                
+                sparklesContainer.appendChild(sparkle);
+                
+                setTimeout(() => {
+                    sparkle.remove();
+                }, 2000);
+            }, 200);
+        }
+
+        // Create confetti
+        function createConfetti() {
+            const celebration = document.getElementById('celebration');
+            celebration.style.display = 'block';
+            
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7', '#dda0dd'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                
+                celebration.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+            
+            setTimeout(() => {
+                celebration.style.display = 'none';
+            }, 5000);
+        }
+
+        function handleYes() {
+            logButtonClick('Yes');
+            createConfetti();
+            
+            // Update the message
+            const message = document.querySelector('.message');
+            message.innerHTML = `
+                <div style="color: #ff6b6b; font-size: 1.5rem; font-weight: bold; margin-bottom: 20px;">
+                    🎉 УРААА 🎉
+                </div>
+                <div style="color: #666; font-size: 1.2rem;">
+                    Спасибо что согласилась 💕<br><br>
+                    Давай создадим с тобой прекрасные воспоминания! ✨<br><br>
+                    <span style="color: #ff6b6b; font-weight: bold;">Жаним, я люблю тебя очень сильно! 💖</span>
+                </div>
+            `;
+            
+            // Hide the buttons
+            document.getElementById('buttonsContainer').style.display = 'none';
+            
+            // Add celebration animation to the heart
+            const heartIcon = document.querySelector('.heart-icon');
+            heartIcon.style.animation = 'pulse 0.5s ease-in-out infinite';
+            heartIcon.textContent = '💖';
+        }
+
+        function handleNo() {
+            logButtonClick('No');
+            
+            // Make the No button run away
+            const noBtn = document.querySelector('.btn-no');
+            noBtn.style.position = 'relative';
+            noBtn.style.left = Math.random() * 200 - 100 + 'px';
+            noBtn.style.top = Math.random() * 200 - 100 + 'px';
+            
+            // Update the message
+            const message = document.querySelector('.message');
+            message.innerHTML = `
+                <div style="color: #666; font-size: 1.2rem;">
+                    Как же так 💔<br><br>
+                    Ты передумаешь? 🥺<br><br>
+                    <span style="color: #ff6b6b; font-weight: bold;">Я очень хочу провести с тобой время 💕</span>
+                </div>
+            `;
+            
+            // Change the heart to a sad one
+            const heartIcon = document.querySelector('.heart-icon');
+            heartIcon.textContent = '💔';
+            heartIcon.style.animation = 'pulse 1s ease-in-out infinite';
+        }
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', function() {
+            createFloatingHearts();
+            createSparkles();
+        });
+    </script>
+</body>
+</html>
